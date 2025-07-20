@@ -1,11 +1,13 @@
 # Face-Detection-attendance-by-Rekognition
 
+face-detection-attendance-by-rekognition/
 ├── frontend/
-│   └── index.html  ← (the file you shared)
+│   └── index.html                  # Web interface (camera access + upload)
 ├── backend/
-│   ├── generate-presigned-url.py or .js
-│   └── detect-face.py or .js
-├── README.md
+│   ├── generate-presigned-url.py  # Lambda: generates signed S3 upload URLs
+│   └── detect-face.py             # Lambda: calls Rekognition to match face
+├── README.md                      # Project documentation
+
 
 🔧 System Architecture – Serverless Face Recognition Attendance System
 This project implements a serverless attendance system using facial recognition, built entirely on AWS cloud services — without using a database.
@@ -13,63 +15,63 @@ This project implements a serverless attendance system using facial recognition,
 🧱 Core Components:
 Frontend (HTML + JavaScript)
 
-Hosted on Amazon S3 and delivered globally via CloudFront
+1. Hosted on Amazon S3 and delivered globally via CloudFront
 
-Lets users capture webcam images and trigger attendance
+      Lets users capture webcam images and trigger attendance
 
-Amazon API Gateway
+2. Amazon API Gateway
 
-Serves as the REST API interface for:
+    Serves as the REST API interface for:
 
-Generating pre-signed S3 upload URLs
+    Generating pre-signed S3 upload URLs
 
-Triggering attendance marking logic
+    Triggering attendance marking logic
 
-AWS Lambda Functions
+3. AWS Lambda Functions
 
-Lightweight backend logic:
+    Lightweight backend logic:
 
-Generates secure pre-signed S3 URLs for uploading snapshots
+    Generates secure pre-signed S3 URLs for uploading snapshots
 
-Invokes Rekognition to identify faces from uploaded images
+    Invokes Rekognition to identify faces from uploaded images
 
-Returns the matched person info (stored in Rekognition Collection)
+    Returns the matched person info (stored in Rekognition Collection)
 
-Amazon Rekognition
+4. Amazon Rekognition
 
-Facial recognition engine used to:
+    Facial recognition engine used to:
 
-Compare uploaded images against a pre-indexed Collection
+    Compare uploaded images against a pre-indexed Collection
 
-Identify employee based on face match confidence score
+    Identify employee based on face match confidence score
 
-Amazon S3
+5. Amazon S3
 
-Temporarily stores face snapshots uploaded from frontend
+    Temporarily stores face snapshots uploaded from frontend
 
-Also hosts the static frontend web application
+    Also hosts the static frontend web application
 
-Amazon CloudFront
+6. Amazon CloudFront
 
-Speeds up content delivery and acts as the public entry point for the web interface
+    Speeds up content delivery and acts as the public entry point for the web interface
 
-Amazon CloudWatch
+7. Amazon CloudWatch
 
-Monitors and logs Lambda function invocations and errors for debugging
+     Monitors and logs Lambda function invocations and errors for debugging
 
 🔄 Flow Overview
 User accesses the frontend (HTML page via S3 + CloudFront)
 
-Webcam is activated, user captures a face image
+    Webcam is activated, user captures a face image
 
-Frontend requests a pre-signed upload URL from API Gateway → Lambda
+    Frontend requests a pre-signed upload URL from API Gateway → Lambda
 
-Lambda returns a signed S3 URL, and the frontend uploads the image
+    Lambda returns a signed S3 URL, and the frontend uploads the image
 
-A second API call (or S3 event) triggers a Lambda
+    A second S3 event triggers a Lambda
 
-Lambda calls Rekognition to search for the face in an existing collection
+    Lambda calls Rekognition to search for the face in an existing collection
 
-Matched face (employee ID) is returned to the frontend and displayed as success/failure
+    Matched face (employee ID) is returned to the frontend and displayed as attendance success
 
-(Optional) Logs are visible via CloudWatch for admins
+
