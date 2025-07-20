@@ -10,7 +10,8 @@ REFERENCE_DIR = 'stored_image'      # S3 folder where images are stored
 
 # You can also move this to a config file or DynamoDB if needed
 person_files = {
-    'Lekhana_vemuri': 'Lekhana.jpg',
+    'Lekhana_vemuri': 'Lekhana_vemuri.jpg',
+    'priti_Nalgiri' : 'priti_Nalgiri.jpg',
 }
 
 def lambda_handler(event, context):
