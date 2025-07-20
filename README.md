@@ -1,77 +1,65 @@
-# Face-Detection-attendance-by-Rekognition
-
+📁 Project Structure
+bash
+Copy
+Edit
 face-detection-attendance-by-rekognition/
-├── frontend/
-│   └── index.html                  # Web interface (camera access + upload)
-├── backend/
-│   ├── generate-presigned-url.py  # Lambda: generates signed S3 upload URLs
-│   └── detect-face.py             # Lambda: calls Rekognition to match face
-├── README.md                      # Project documentation
+      1. frontend/  └── index.html                  # Web interface (camera access + upload)
+      2. backend/
+             generate-presigned-url.py  # Lambda: generates signed S3 upload URLs
+            rekognition.json             # Lambda: calls Rekognition to match face
+      3. README.md                      # Project documentation
 
+🏗️ System Architecture
+This system uses a serverless architecture built entirely on AWS.
 
-🔧 System Architecture – Serverless Face Recognition Attendance System
-This project implements a serverless attendance system using facial recognition, built entirely on AWS cloud services — without using a database.
-
-🧱 Core Components:
+🔧 Core Components
 Frontend (HTML + JavaScript)
+Hosted on Amazon S3 and delivered via CloudFront. It captures webcam images and uploads them to S3 using pre-signed URLs.
 
-1. Hosted on Amazon S3 and delivered globally via CloudFront
+1. Amazon S3
+      Stores the static website (index.html) and uploaded face images.
 
-      Lets users capture webcam images and trigger attendance
+2. Amazon CloudFront
+      Distributes the web interface globally with low latency.
 
-2. Amazon API Gateway
+3. Amazon API Gateway
+      Serves as the REST API layer to access Lambda functions securely.
 
-    Serves as the REST API interface for:
+4. AWS Lambda
+      Handles the backend logic:
 
-    Generating pre-signed S3 upload URLs
+5. Generates pre-signed URLs for secure S3 upload
+      Invokes Rekognition for facial comparison
 
-    Triggering attendance marking logic
-
-3. AWS Lambda Functions
-
-    Lightweight backend logic:
-
-    Generates secure pre-signed S3 URLs for uploading snapshots
-
-    Invokes Rekognition to identify faces from uploaded images
-
-    Returns the matched person info (stored in Rekognition Collection)
-
-4. Amazon Rekognition
-
-    Facial recognition engine used to:
-
-    Compare uploaded images against a pre-indexed Collection
-
-    Identify employee based on face match confidence score
-
-5. Amazon S3
-
-    Temporarily stores face snapshots uploaded from frontend
-
-    Also hosts the static frontend web application
-
-6. Amazon CloudFront
-
-    Speeds up content delivery and acts as the public entry point for the web interface
+6. Amazon Rekognition
+      Compares uploaded faces against a pre-indexed Rekognition Collection and returns the matched user.
 
 7. Amazon CloudWatch
+      Logs Lambda invocations and errors for monitoring and debugging.
 
-     Monitors and logs Lambda function invocations and errors for debugging
+🔄 Workflow (How It Works)
+1. User accesses the frontend (served via S3 + CloudFront).
+2. The webcam activates and captures a face image.
+3. Frontend requests a pre-signed URL from API Gateway → Lambda.
+4. Lambda returns the signed URL; the image is uploaded to S3.
+5. A second API call (or automatic trigger) invokes another Lambda function.
+6. This Lambda function calls Rekognition to compare the face with stored images in the Collection.
+7. The matched result (Employee ID or failure message) is returned to the frontend.
 
-🔄 Flow Overview
-User accesses the frontend (HTML page via S3 + CloudFront)
+🚀 Deployment Steps
 
-    Webcam is activated, user captures a face image
+✅ You need an AWS account with appropriate IAM permissions.
+Step-1. Create an S3 Bucket for hosting the frontend and storing uploads.
+Step-2 Create a Rekognition Collection and index known employee face images.
+Step-3 Deploy two Lambda functions:
+       generate-presigned-url.py
+      rekognition.json
+Step-4 Set up API Gateway to connect the frontend to your Lambda functions.
+Step-5 Enable CORS for both the S3 bucket and API Gateway.
+Step-6 Upload index.html to the S3 bucket and connect it to CloudFront.
 
-    Frontend requests a pre-signed upload URL from API Gateway → Lambda
-
-    Lambda returns a signed S3 URL, and the frontend uploads the image
-
-    A second S3 event triggers a Lambda
-
-    Lambda calls Rekognition to search for the face in an existing collection
-
-    Matched face (employee ID) is returned to the frontend and displayed as attendance success
-
-
+📸 Use Case Example
+The employee visits the web app via browser.
+Captures their face using the webcam.
+Face is compared with existing faces in the Rekognition Collection.
+Attendance is marked automatically if a match is found.
