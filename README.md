@@ -6,7 +6,7 @@ face-detection-attendance-by-rekognition/
       1. frontend/  └── index.html                  # Web interface (camera access + upload)
       2. backend/
              generate-presigned-url.py  # Lambda: generates signed S3 upload URLs
-            rekognition.json             # Lambda: calls Rekognition to match face
+            rekognition.py             # Lambda: calls Rekognition to match face
       3. README.md                      # Project documentation
 
 🏗️ System Architecture
@@ -53,7 +53,7 @@ Step-1. Create an S3 Bucket for hosting the frontend and storing uploads.
 Step-2 Create a Rekognition Collection and index known employee face images.
 Step-3 Deploy two Lambda functions:
        generate-presigned-url.py
-      rekognition.json
+      rekognition.py
 Step-4 Set up API Gateway to connect the frontend to your Lambda functions.
 Step-5 Enable CORS for both the S3 bucket and API Gateway.
 Step-6 Upload index.html to the S3 bucket and connect it to CloudFront.
